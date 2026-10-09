@@ -1,15 +1,15 @@
 /* =====================================================================
-   DCB Infrastructure Map — illustrative flows
+   Homelab Atlas — illustrative flows
    ---------------------------------------------------------------------
    Glowing pulses travelling along the paths computed by the engine.
    They show logical flows, NOT telemetry. With prefers-reduced-motion
    (or animations off) static arrows are drawn instead.
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.flows = (function () {
+Atlas.flows = (function () {
   "use strict";
-  const R = DCB.render;
+  const R = Atlas.render;
   let layer, staticLayer, raf = null, running = false, motion = true, last = 0, t = 0;
   const active = {};                // id → { key, segs, len, parts, color, speed, bidir }
   const SPEED = 62;                 // world px/s: slow enough to follow
@@ -17,7 +17,7 @@ DCB.flows = (function () {
   function polyline(steps) {
     const pts = [];
     steps.forEach(s => {
-      let p = R.route(DCB.engine.linkById[s.l]).slice();
+      let p = R.route(Atlas.engine.linkById[s.l]).slice();
       if (s.dir < 0) p.reverse();
       p.forEach((q, i) => {
         const prev = pts[pts.length - 1];

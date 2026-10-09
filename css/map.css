@@ -1,5 +1,5 @@
 /* =====================================================================
-   DCB Infrastructure Map — SVG diagram styles
+   Homelab Atlas — SVG diagram styles
    ===================================================================== */
 
 #map { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; outline: none; user-select: none; -webkit-user-select: none; }

@@ -1,16 +1,16 @@
 /* =====================================================================
-   DCB Infrastructure Map — server card (Proxmox nodes)
+   Homelab Atlas — server card (Proxmox nodes)
    ---------------------------------------------------------------------
    Stylised server: header, chassis with disk bays and bond ports,
    hosted workload groups (coloured by recovery mode) and, on the
    recovery node, the area where replicated workloads appear.
    ===================================================================== */
-window.DCB = window.DCB || {};
-DCB.svcEls = {};
+window.Atlas = window.Atlas || {};
+Atlas.svcEls = {};
 
-DCB.renderServer = function (g, n, h) {
+Atlas.renderServer = function (g, n, h) {
   "use strict";
-  const M = DCB.model, E = DCB.engine;
+  const M = Atlas.model, E = Atlas.engine;
   const el = h.el, text = h.text;
   const L = -n.w / 2, Tp = -n.h / 2, W = n.w;
 
@@ -50,7 +50,7 @@ DCB.renderServer = function (g, n, h) {
   });
   // bond ports (one per stack unit)
   const nics = {};
-  const bondLinks = DCB.topology.links.filter(l => l.bond === n.id)
+  const bondLinks = Atlas.topology.links.filter(l => l.bond === n.id)
     .sort((a, b) => E.nodeById[E.other(a, n.id)].cx - E.nodeById[E.other(b, n.id)].cx);
   bondLinks.forEach((l, i) => {
     const px = -L - 92 + i * 38;
@@ -80,7 +80,7 @@ DCB.renderServer = function (g, n, h) {
     text(g, L + 14, wy, "WORKLOADS", "section-label");
     services.forEach((s, i) => {
       const cx = L + 14 + (i % COLS) * (CW + GAP), cy = wy + 8 + Math.floor(i / COLS) * (CH + 6);
-      DCB.svcEls[s.id] = { g: serviceChip(g, s, cx, cy, false) };
+      Atlas.svcEls[s.id] = { g: serviceChip(g, s, cx, cy, false) };
     });
   }
 
@@ -113,8 +113,8 @@ DCB.renderServer = function (g, n, h) {
     text(g, L + 24, ay + 16, "Takes over selected workloads from PVE01", "section-label emergency");
     replicas.forEach((s, i) => {
       const cx = L + 24 + (i % COLS) * (CW + 6), cy = ay + 26 + Math.floor(i / COLS) * (CH + 5);
-      DCB.svcEls[s.id] = DCB.svcEls[s.id] || {};
-      DCB.svcEls[s.id].ghost = serviceChip(g, s, cx, cy, true);
+      Atlas.svcEls[s.id] = Atlas.svcEls[s.id] || {};
+      Atlas.svcEls[s.id].ghost = serviceChip(g, s, cx, cy, true);
     });
   }
 

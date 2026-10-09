@@ -1,16 +1,16 @@
 /* =====================================================================
-   DCB Infrastructure Map — dependency engine
+   Homelab Atlas — dependency engine
    ---------------------------------------------------------------------
    From topology + model + simulated faults it computes: power, node
    states, CARP MASTER, active WANs, cluster quorum, workload states and
    the paths of the illustrative flows. No telemetry: it is an
    architectural model.
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.engine = (function () {
+Atlas.engine = (function () {
   "use strict";
-  const T = DCB.topology, M = DCB.model;
+  const T = Atlas.topology, M = Atlas.model;
 
   const nodeById = {}, linkById = {}, svcById = {};
   T.nodes.forEach(n => { nodeById[n.id] = n; });

@@ -1,14 +1,14 @@
 /* =====================================================================
-   DCB Infrastructure Map — interface content
+   Homelab Atlas — interface content
    ---------------------------------------------------------------------
    Pure functions that build the HTML for the side panel, tooltips and
    scenario card from the data and the engine result.
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.ui = (function () {
+Atlas.ui = (function () {
   "use strict";
-  const T = DCB.topology, M = DCB.model, E = DCB.engine;
+  const T = Atlas.topology, M = Atlas.model, E = Atlas.engine;
   const esc = s => String(s === undefined || s === null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const KIND = {

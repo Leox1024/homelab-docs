@@ -1,9 +1,9 @@
 /* =====================================================================
-   DCB Infrastructure Map — navigation (zoom, pan, pinch, keyboard)
+   Homelab Atlas — navigation (zoom, pan, pinch, keyboard)
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.view = (function () {
+Atlas.view = (function () {
   "use strict";
   let svg, vp, world, onClick;
   const v = { k: 1, x: 0, y: 0 };

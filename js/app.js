@@ -1,17 +1,17 @@
 /* =====================================================================
-   DCB Infrastructure Map — application
+   Homelab Atlas — application
    ---------------------------------------------------------------------
    Interface state, view modes, selection, highlighting layers,
    failure scenarios, and the glue between engine, renderer and panels.
    ===================================================================== */
 (function () {
   "use strict";
-  const T = DCB.topology, M = DCB.model, E = DCB.engine, R = DCB.render, UI = DCB.ui, V = DCB.view, F = DCB.flows;
+  const T = Atlas.topology, M = Atlas.model, E = Atlas.engine, R = Atlas.render, UI = Atlas.ui, V = Atlas.view, F = Atlas.flows;
   const $ = s => document.querySelector(s);
   const reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
   const store = {
-    get(k) { try { return window.localStorage.getItem("dcb-map:" + k); } catch (e) { return null; } },
-    set(k, v) { try { window.localStorage.setItem("dcb-map:" + k, v); } catch (e) { /* storage unavailable */ } }
+    get(k) { try { return window.localStorage.getItem("homelab-atlas:" + k); } catch (e) { return null; } },
+    set(k, v) { try { window.localStorage.setItem("homelab-atlas:" + k, v); } catch (e) { /* storage unavailable */ } }
   };
 
   const S = {
@@ -86,7 +86,7 @@
     prevActive = nowActive;
 
     M.services.forEach(s => {
-      const els = DCB.svcEls[s.id], st = r.services[s.id];
+      const els = Atlas.svcEls[s.id], st = r.services[s.id];
       if (!els) return;
       if (els.g) els.g.dataset.status = st.status;
       if (els.ghost) els.ghost.dataset.status = st.status;
@@ -138,7 +138,7 @@
     });
     document.querySelectorAll(".link-label[data-for]").forEach(t => t.classList.toggle("is-dim", !!linkSet && !linkSet.has(t.getAttribute("data-for"))));
     M.services.forEach(s => {
-      const els = DCB.svcEls[s.id];
+      const els = Atlas.svcEls[s.id];
       if (!els) return;
       [els.g, els.ghost].forEach(g => { if (g) g.classList.toggle("is-hl", !!svcSet && svcSet.has(s.id)); });
     });

@@ -1,14 +1,14 @@
 /* =====================================================================
-   DCB Infrastructure Map — SVG rendering
+   Homelab Atlas — SVG rendering
    ---------------------------------------------------------------------
    Builds the diagram from the data: bands, orthogonally routed links
    and stylised nodes for each device type.
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.render = (function () {
+Atlas.render = (function () {
   "use strict";
-  const T = DCB.topology, M = DCB.model, E = DCB.engine;
+  const T = Atlas.topology, M = Atlas.model, E = Atlas.engine;
   const NS = "http://www.w3.org/2000/svg";
 
   function el(tag, attrs, parent) {
@@ -254,7 +254,7 @@ DCB.render = (function () {
       ["wifi", "chip", "camera"].forEach((ic, i) => icon(g, ic, -n.w / 2 + 14 + i * 26, n.h / 2 - 24, 16, "node-icon small"));
       return { chip: chip(g, n.w / 2 - 12, n.h / 2 - 16) };
     },
-    server(g, n) { return DCB.renderServer(g, n, { el: el, text: text, icon: icon, chip: chip, baseCard: baseCard }); },
+    server(g, n) { return Atlas.renderServer(g, n, { el: el, text: text, icon: icon, chip: chip, baseCard: baseCard }); },
     jbod(g, n) {
       baseCard(g, n, "card-jbod");
       text(g, -n.w / 2 + 14, -n.h / 2 + 20, n.label, "node-label");

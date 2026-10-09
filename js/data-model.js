@@ -1,13 +1,13 @@
 /* =====================================================================
-   DCB Infrastructure Map — logical model
+   Homelab Atlas — logical model
    ---------------------------------------------------------------------
    Workloads, VLANs, redundancy rules, illustrative flows, scenarios and
    design notes. engine.js combines these rules with the topology to
    compute states, paths and the consequences of each failure.
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.model = {
+Atlas.model = {
   /* OPNsense gateway group: same tier = load balancing, lower tier = higher priority */
   gateways: [
     { node: "starlink", tier: 1 },

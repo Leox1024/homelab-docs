@@ -1,5 +1,5 @@
 /* =====================================================================
-   DCB Infrastructure Map — topology (target architecture)
+   Homelab Atlas — topology (target architecture)
    ---------------------------------------------------------------------
    WHAT exists and HOW it is connected. The diagram, dependencies and
    failure scenarios are all computed from this file: to change the
@@ -10,11 +10,11 @@
    that side; "via" lists orthogonal moves ({x} = move horizontally,
    {y} = move vertically).
    ===================================================================== */
-window.DCB = window.DCB || {};
+window.Atlas = window.Atlas || {};
 
-DCB.topology = {
+Atlas.topology = {
   meta: {
-    name: "DCB Infrastructure",
+    name: "Homelab Atlas",
     disclaimer: "Flows, pulses and LEDs are illustrative: no live telemetry is connected."
   },
 

@@ -1,16 +1,16 @@
 /* =====================================================================
-   Homelab Atlas — server card (Proxmox nodes)
+   Homelab Docs — server card (Proxmox nodes)
    ---------------------------------------------------------------------
    Stylised server: header, chassis with disk bays and bond ports,
    hosted workload groups (coloured by recovery mode) and, on the
    recovery node, the area where replicated workloads appear.
    ===================================================================== */
-window.Atlas = window.Atlas || {};
-Atlas.svcEls = {};
+window.HomelabDocs = window.HomelabDocs || {};
+HomelabDocs.svcEls = {};
 
-Atlas.renderServer = function (g, n, h) {
+HomelabDocs.renderServer = function (g, n, h) {
   "use strict";
-  const M = Atlas.model, E = Atlas.engine;
+  const M = HomelabDocs.model, E = HomelabDocs.engine;
   const el = h.el, text = h.text;
   const L = -n.w / 2, Tp = -n.h / 2, W = n.w;
 
@@ -50,7 +50,7 @@ Atlas.renderServer = function (g, n, h) {
   });
   // bond ports (one per stack unit)
   const nics = {};
-  const bondLinks = Atlas.topology.links.filter(l => l.bond === n.id)
+  const bondLinks = HomelabDocs.topology.links.filter(l => l.bond === n.id)
     .sort((a, b) => E.nodeById[E.other(a, n.id)].cx - E.nodeById[E.other(b, n.id)].cx);
   bondLinks.forEach((l, i) => {
     const px = -L - 92 + i * 38;
@@ -80,7 +80,7 @@ Atlas.renderServer = function (g, n, h) {
     text(g, L + 14, wy, "WORKLOADS", "section-label");
     services.forEach((s, i) => {
       const cx = L + 14 + (i % COLS) * (CW + GAP), cy = wy + 8 + Math.floor(i / COLS) * (CH + 6);
-      Atlas.svcEls[s.id] = { g: serviceChip(g, s, cx, cy, false) };
+      HomelabDocs.svcEls[s.id] = { g: serviceChip(g, s, cx, cy, false) };
     });
   }
 
@@ -113,8 +113,8 @@ Atlas.renderServer = function (g, n, h) {
     text(g, L + 24, ay + 16, "Takes over selected workloads from PVE01", "section-label emergency");
     replicas.forEach((s, i) => {
       const cx = L + 24 + (i % COLS) * (CW + 6), cy = ay + 26 + Math.floor(i / COLS) * (CH + 5);
-      Atlas.svcEls[s.id] = Atlas.svcEls[s.id] || {};
-      Atlas.svcEls[s.id].ghost = serviceChip(g, s, cx, cy, true);
+      HomelabDocs.svcEls[s.id] = HomelabDocs.svcEls[s.id] || {};
+      HomelabDocs.svcEls[s.id].ghost = serviceChip(g, s, cx, cy, true);
     });
   }
 

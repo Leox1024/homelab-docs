@@ -1,13 +1,13 @@
 /* =====================================================================
-   Homelab Atlas — logical model
+   Homelab Docs — logical model
    ---------------------------------------------------------------------
    Workloads, VLANs, redundancy rules, illustrative flows, scenarios and
    design notes. engine.js combines these rules with the topology to
    compute states, paths and the consequences of each failure.
    ===================================================================== */
-window.Atlas = window.Atlas || {};
+window.HomelabDocs = window.HomelabDocs || {};
 
-Atlas.model = {
+HomelabDocs.model = {
   /* OPNsense gateway group: same tier = load balancing, lower tier = higher priority */
   gateways: [
     { node: "starlink", tier: 1 },

@@ -1,9 +1,9 @@
 /* =====================================================================
-   Homelab Atlas — navigation (zoom, pan, pinch, keyboard)
+   Homelab Docs — navigation (zoom, pan, pinch, keyboard)
    ===================================================================== */
-window.Atlas = window.Atlas || {};
+window.HomelabDocs = window.HomelabDocs || {};
 
-Atlas.view = (function () {
+HomelabDocs.view = (function () {
   "use strict";
   let svg, vp, world, onClick;
   const v = { k: 1, x: 0, y: 0 };

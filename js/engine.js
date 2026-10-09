@@ -1,16 +1,16 @@
 /* =====================================================================
-   Homelab Atlas — dependency engine
+   Homelab Docs — dependency engine
    ---------------------------------------------------------------------
    From topology + model + simulated faults it computes: power, node
    states, CARP MASTER, active WANs, cluster quorum, workload states and
    the paths of the illustrative flows. No telemetry: it is an
    architectural model.
    ===================================================================== */
-window.Atlas = window.Atlas || {};
+window.HomelabDocs = window.HomelabDocs || {};
 
-Atlas.engine = (function () {
+HomelabDocs.engine = (function () {
   "use strict";
-  const T = Atlas.topology, M = Atlas.model;
+  const T = HomelabDocs.topology, M = HomelabDocs.model;
 
   const nodeById = {}, linkById = {}, svcById = {};
   T.nodes.forEach(n => { nodeById[n.id] = n; });

@@ -1,14 +1,14 @@
 /* =====================================================================
-   Homelab Atlas — interface content
+   Homelab Docs — interface content
    ---------------------------------------------------------------------
    Pure functions that build the HTML for the side panel, tooltips and
    scenario card from the data and the engine result.
    ===================================================================== */
-window.Atlas = window.Atlas || {};
+window.HomelabDocs = window.HomelabDocs || {};
 
-Atlas.ui = (function () {
+HomelabDocs.ui = (function () {
   "use strict";
-  const T = Atlas.topology, M = Atlas.model, E = Atlas.engine;
+  const T = HomelabDocs.topology, M = HomelabDocs.model, E = HomelabDocs.engine;
   const esc = s => String(s === undefined || s === null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const KIND = {

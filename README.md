@@ -1,4 +1,4 @@
-# Homelab Atlas
+# Homelab Docs
 
 An interactive map of my homelab: network, power, servers and storage, with failure simulations.
 

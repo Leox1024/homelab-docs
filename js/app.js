@@ -464,12 +464,18 @@
   let rt = null;
   window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!V.userMoved) V.fit(false, panelInset(), cardInset()); }, 120); });
 
-  // draw attention to the simulations: two red flashes shortly after load
-  setTimeout(() => {
-    const dock = $("#dock");
+  // draw attention to the simulations: red flashes after load (2 at 2 s, 3 at 15 s)
+  const dock = $("#dock");
+  dock.addEventListener("animationend", e => { if (e.target === dock) dock.classList.remove("is-attention"); });
+  function flashDock(times) {
+    if (S.scenario) return;                 // already simulating: no need to point at it
+    dock.classList.remove("is-attention");
+    void dock.offsetWidth;                  // restart the animation
+    dock.style.setProperty("--flashes", times);
     dock.classList.add("is-attention");
-    dock.addEventListener("animationend", e => { if (e.target === dock) dock.classList.remove("is-attention"); });
-  }, 2000);
+  }
+  setTimeout(() => flashDock(2), 2000);
+  setTimeout(() => flashDock(3), 15000);
 
   /* ================= Start ================= */
   document.querySelectorAll("[data-mode-btn]").forEach(b => b.setAttribute("aria-checked", String(b.getAttribute("data-mode-btn") === S.mode)));

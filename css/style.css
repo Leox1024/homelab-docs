@@ -113,16 +113,16 @@ body:not(.is-ready) #stage { opacity: 0; }
 .dock-items { display: flex; gap: 2px; }
 .dock button { padding: 0 11px; }
 .dock button[aria-pressed="true"] { background: rgba(245, 158, 11, .16); color: #fde68a; }
-.dock.is-attention { animation: dock-flash 1.8s ease-in-out 1; }
-.dock.is-attention .dock-label { animation: label-flash 1.8s ease-in-out 1; }
+/* one red pulse, repeated --flashes times */
+.dock.is-attention { animation: dock-flash .8s ease-in-out var(--flashes, 2); }
+.dock.is-attention .dock-label { animation: label-flash .8s ease-in-out var(--flashes, 2); }
 @keyframes dock-flash {
-  0%, 40%, 100% { border-color: var(--line); box-shadow: var(--shadow); }
-  18%, 62% { border-color: rgba(248, 113, 113, .9); box-shadow: 0 0 0 1px rgba(248, 113, 113, .55), 0 0 28px rgba(248, 113, 113, .45), var(--shadow); }
-  84% { border-color: var(--line); box-shadow: var(--shadow); }
+  0%, 100% { border-color: var(--line); box-shadow: var(--shadow); }
+  40% { border-color: rgba(248, 113, 113, .9); box-shadow: 0 0 0 1px rgba(248, 113, 113, .55), 0 0 28px rgba(248, 113, 113, .45), var(--shadow); }
 }
 @keyframes label-flash {
-  0%, 40%, 84%, 100% { color: var(--dim); }
-  18%, 62% { color: #fca5a5; }
+  0%, 100% { color: var(--dim); }
+  40% { color: #fca5a5; }
 }
 
 /* ---------- Scenario card ---------- */

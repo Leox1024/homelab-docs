@@ -58,7 +58,8 @@ HomelabDocs.engine = (function () {
         const feed = broken ? (inOk ? "bypass" : "off") : (inOk ? "online" : "battery");
         r = { powered: feed !== "off", feed: feed };
       } else if (powerIn[id]) {
-        const src = powerIn[id].find(l => visit(l.a).powered && !faults.has(l.id));
+        // a failed device stops feeding power downstream (a failed UPS still passes mains through its bypass)
+        const src = powerIn[id].find(l => visit(l.a).powered && !faults.has(l.id) && (!faults.has(l.a) || kindOf(l.a) === "ups"));
         r = src ? { powered: true, feed: P[src.a].feed === "grid" || P[src.a].feed === "gen" ? "online" : P[src.a].feed } : { powered: false, feed: "off" };
       } else if (poeIn[id]) {
         const srcs = poeIn[id].filter(l => visit(l.a).powered && !faults.has(l.a) && !faults.has(l.id));

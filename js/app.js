@@ -16,7 +16,7 @@
 
   const S = {
     mode: store.get("mode") || "full", sel: null, selLink: null, panel: null,
-    scenario: null, shown: 0, detect: true, failover: false,
+    scenario: null, demo: false, shown: 0, detect: true, failover: false,
     vlan: null, spof: false, motion: !reduceMQ.matches, result: null
   };
   if (["network", "power", "full"].indexOf(S.mode) < 0) S.mode = "full";
@@ -201,8 +201,11 @@
   $("#panel-close").addEventListener("click", clearSelection);
   $("#panel-body").addEventListener("click", e => {
     const go = e.target.closest("[data-goto]"), gl = e.target.closest("[data-goto-link]");
+    const br = e.target.closest("[data-break]"), rs = e.target.closest("[data-restore]");
     if (go) selectNode(go.getAttribute("data-goto"), true);
     else if (gl) selectLink(gl.getAttribute("data-goto-link"));
+    else if (br) { const id = br.getAttribute("data-break"); clearSelection(); startScenario(scenarioForNode(id)); }
+    else if (rs) { clearSelection(); endScenario(); }
   });
 
   /* ================= Tooltip ================= */
@@ -357,10 +360,51 @@
     timers.push(setTimeout(next, 250));
   }
 
-  function startScenario(id) {
+  /* Failure of any device: a predefined scenario if there is one, otherwise
+     one built on the fly by comparing the model before and after the fault. */
+  function scenarioForNode(id) {
+    return M.scenarios.find(s => s.faults.length === 1 && s.faults[0] === id) || adhocScenario(id);
+  }
+  function adhocScenario(id) {
+    const n = E.nodeById[id], lbl = x => E.nodeById[x].label;
+    const base = E.compute({}), p0 = E.compute({ faults: [id], detect: false }), p1 = E.compute({ faults: [id], detect: true, failover: true });
+    const steps = [{ ph: 0, t: n.label + " stops." }];
+    const changed = (res, states) => T.nodes.filter(m => m.id !== id && states.indexOf(res.nodes[m.id].state) >= 0 &&
+      states.indexOf(base.nodes[m.id].state) < 0).map(m => m.label);
+    const off = changed(p0, ["off"]), cut = changed(p0, ["isolated", "orphan"]), deg = changed(p0, ["degraded"]);
+    if (off.length) steps.push({ ph: 0, t: "Loses power: " + off.join(", ") + "." });
+    if (cut.length) steps.push({ ph: 0, t: "Cut off: " + cut.join(", ") + "." });
+    if (deg.length) steps.push({ ph: 0, t: "Running degraded: " + deg.join(", ") + "." });
+    const reaction = [];
+    if (p1.master !== base.master)
+      reaction.push(p1.master && p1.up[p1.master] ? lbl(p1.master) + " takes over as firewall MASTER." : "No firewall can forward traffic any more.");
+    const w1 = p1.activeWans.filter(w => p1.up[w]);
+    if (w1.join() !== base.activeWans.join())
+      reaction.push(w1.length ? "Internet now leaves through " + w1.map(lbl).join(" + ") + " only." : "Internet access is lost.");
+    if (p1.quorum.votes !== base.quorum.votes)
+      reaction.push(p1.quorum.quorate ? "The cluster keeps quorum (" + p1.quorum.votes + " of " + p1.quorum.total + " votes)." : "The cluster loses quorum.");
+    const svc = states => M.services.filter(s => states.indexOf(p1.services[s.id].status) >= 0 && states.indexOf(base.services[s.id].status) < 0).map(s => s.name);
+    const rec = svc(["recovered"]), stop = svc(["down", "restorable", "ready"]), sdeg = svc(["degraded"]);
+    if (rec.length) reaction.push("Restart automatically on " + lbl(M.cluster.recoveryHost) + ": " + rec.join(", ") + ".");
+    if (stop.length) reaction.push("Stopped: " + stop.join(", ") + ".");
+    if (sdeg.length) reaction.push("Degraded: " + sdeg.join(", ") + ".");
+    if (p1.nodes.ups.state !== base.nodes.ups.state)
+      reaction.push({ battery: "The UPS runs on battery.", bypass: "The UPS runs in bypass, without protection.", off: "The UPS is off." }[p1.nodes.ups.state] || "");
+    const had = {}, has = {};
+    base.flows.forEach(f => { if (f.steps) had[f.def.id] = f.def; });
+    p1.flows.forEach(f => { if (f.steps) has[f.def.id] = true; });
+    const lost = Object.keys(had).filter(k => !has[k] && k !== "f-sync" && k !== "f-stack-ret").map(k => had[k].label);
+    if (lost.length) reaction.push("Interrupted: " + lost.join("; ") + ".");
+    if (!reaction.filter(Boolean).length) reaction.push("No service is interrupted: redundancy absorbs the failure.");
+    reaction.filter(Boolean).forEach(t => steps.push({ ph: 1, t: t }));
+    return { id: "node:" + id, title: n.label + " failure", faults: [id], recovery: "computed", focus: [id], steps: steps, adhoc: true };
+  }
+
+  function startScenario(ref) {
     clearTimers();
-    const sc = M.scenarios.find(s => s.id === id);
+    const sc = typeof ref === "string" ? M.scenarios.find(s => s.id === ref) : ref;
     if (!sc) return;
+    hideInvite(true);
     // clean starting state, then the failure
     S.scenario = null; S.detect = true; S.failover = false;
     compute();
@@ -375,7 +419,7 @@
     reveal(0, ph0, () => {
       if (sc.recovery === "manual") { renderScenarioCard(); return; }
       S.detect = true; S.failover = true; compute();
-      reveal(ph0, sc.steps.length);
+      reveal(ph0, sc.steps.length, () => { if (S.demo) { S.demo = false; flashDock(3, true); } });
     });
   }
   function manualRecovery() {   // for scenarios with recovery: "manual"
@@ -387,7 +431,7 @@
   }
   function endScenario() {
     clearTimers();
-    S.scenario = null; S.detect = true; S.failover = false;
+    S.scenario = null; S.demo = false; S.detect = true; S.failover = false;
     $("#scenario-card").hidden = true;
     syncDock();
     if (!V.userMoved) V.fit(true, panelInset(), 0);
@@ -400,7 +444,11 @@
   }
   $("#scenario-card").addEventListener("click", e => {
     if (e.target.closest("[data-sc-close]")) endScenario();
-    else if (e.target.closest("[data-sc-replay]")) startScenario(S.scenario.id);
+    else if (e.target.closest("[data-sc-replay]")) startScenario(S.scenario);
+    else if (e.target.closest("[data-sc-next]")) {
+      const i = M.scenarios.indexOf(S.scenario);
+      startScenario(M.scenarios[(i + 1) % M.scenarios.length]);
+    }
     else if (e.target.closest("[data-sc-manual]")) manualRecovery();
   });
 
@@ -462,20 +510,58 @@
 
   if (reduceMQ.addEventListener) reduceMQ.addEventListener("change", () => { S.motion = !reduceMQ.matches; paint(); });
   let rt = null;
-  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!V.userMoved) V.fit(false, panelInset(), cardInset()); }, 120); });
+  // refit whenever the visible area changes size (window resize, tab shown after loading hidden, …)
+  const refit = () => { clearTimeout(rt); rt = setTimeout(() => { if (!V.userMoved) V.fit(false, panelInset(), cardInset()); }, 120); };
+  if (window.ResizeObserver) new ResizeObserver(refit).observe(svg);
+  else window.addEventListener("resize", refit);
 
   // draw attention to the simulations: red flashes after load (2 at 2 s, 3 at 15 s)
   const dock = $("#dock");
   dock.addEventListener("animationend", e => { if (e.target === dock) dock.classList.remove("is-attention"); });
-  function flashDock(times) {
-    if (S.scenario) return;                 // already simulating: no need to point at it
+  function flashDock(times, force) {
+    if (S.scenario && !force) return;       // already simulating: no need to point at it
     dock.classList.remove("is-attention");
     void dock.offsetWidth;                  // restart the animation
     dock.style.setProperty("--flashes", times);
     dock.classList.add("is-attention");
   }
   setTimeout(() => flashDock(2), 2000);
-  setTimeout(() => flashDock(3), 15000);
+
+  /* Demo invite: most visitors never touch the dock, so after a while we
+     offer (and then auto-play) one short simulation. Once per visit. */
+  const session = {
+    get(k) { try { return window.sessionStorage.getItem("homelab-docs:" + k); } catch (e) { return null; } },
+    set(k, v) { try { window.sessionStorage.setItem("homelab-docs:" + k, v); } catch (e) { /* unavailable */ } }
+  };
+  const invite = $("#demo-invite");
+  let inviteTimer = null, inviteSc = null, invitePaused = false;
+  function hideInvite(done) {
+    clearInterval(inviteTimer);
+    invite.hidden = true;
+    if (done) session.set("demo", "done");
+  }
+  function showInvite() {
+    if (S.scenario || session.get("demo")) return;
+    if (S.panel) { setTimeout(showInvite, 6000); return; }   // reading something: try again later
+    const pool = M.scenarios.filter(s => s.teaser);
+    inviteSc = pool[Math.floor(Math.random() * pool.length)];
+    invite.querySelector("strong").textContent = inviteSc.teaser;
+    let left = 6;
+    const count = invite.querySelector(".di-count");
+    count.textContent = left;
+    invite.hidden = false;
+    inviteTimer = setInterval(() => {
+      if (invitePaused) return;
+      count.textContent = --left;
+      if (left <= 0) playInvite();
+    }, 1000);
+  }
+  function playInvite() { const sc = inviteSc; hideInvite(true); S.demo = true; startScenario(sc); }
+  invite.addEventListener("pointerenter", () => { invitePaused = true; });
+  invite.addEventListener("pointerleave", () => { invitePaused = false; });
+  invite.querySelector("[data-demo-play]").addEventListener("click", playInvite);
+  invite.querySelector("[data-demo-close]").addEventListener("click", () => hideInvite(true));
+  setTimeout(showInvite, 12000);
 
   /* ================= Start ================= */
   document.querySelectorAll("[data-mode-btn]").forEach(b => b.setAttribute("aria-checked", String(b.getAttribute("data-mode-btn") === S.mode)));

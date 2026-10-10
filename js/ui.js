@@ -101,6 +101,8 @@ HomelabDocs.ui = (function () {
     return f(R.spof, "Single point of failure", "bad") || f(R.partial, "Partial redundancy", "warn") || f(R.redundant, "Redundant", "ok");
   }
 
+  const ICON_BOLT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>';
+  const ICON_RESTORE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5"/></svg>';
   const stateChip = c => c ? '<span class="state-chip ' + c[1] + '">' + esc(c[0]) + "</span>" : "";
 
   const SVC_STATUS = {
@@ -143,7 +145,10 @@ HomelabDocs.ui = (function () {
     const n = E.nodeById[id], st = r.nodes[id];
     const chain = powerChain(id);
     let h = '<header class="p-head"><div class="p-kind">' + esc(KIND[n.kind] || "") + "</div><h2>" + esc(n.label) + "</h2>" +
-      '<div class="p-sub">' + esc(n.model ? n.model + " · " : "") + esc(n.sub || "") + '</div><div class="p-tags">' + stateChip(chipFor(n, st)) + "</div></header>";
+      '<div class="p-sub">' + esc(n.model ? n.model + " · " : "") + esc(n.sub || "") + '</div><div class="p-tags">' + stateChip(chipFor(n, st)) + "</div>" +
+      (r.faults.has(id)
+        ? '<button class="btn break-btn" data-restore>' + ICON_RESTORE + "Restore " + esc(n.label) + "</button>"
+        : '<button class="btn danger break-btn" data-break="' + id + '">' + ICON_BOLT + "Simulate failure</button>") + "</header>";
     h += '<section class="p-sec p-live"><h3>Current state</h3><p>' + esc(sentence(n, st)) + "</p>";
     if (r.power[id].feed !== "ext") h += '<div class="kv"><span>Power</span><span>' + esc(powerText(id, r)) + "</span></div>";
     if (chain.length) h += '<div class="kv"><span>Fed by</span><span>' + chain.map(esc).join(" ← ") + "</span></div>";
@@ -189,7 +194,7 @@ HomelabDocs.ui = (function () {
     const res = showRes && resilienceOf(id);
     if (res) h += '<div class="tt-res ' + res.cls + '"><strong>' + esc(res.label) + "</strong> · " + esc(res.t) + "</div>";
     if (n.tree) h += '<ul class="tt-tree">' + n.tree.map(t => "<li><span>" + esc(t[0]) + "</span><ul>" + t[1].map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></li>").join("") + "</ul>";
-    return h + '<div class="tt-hint">Click for details</div>';
+    return h + '<div class="tt-hint">Click for details or to simulate a failure</div>';
   }
 
   function tooltipLink(id) {
@@ -198,7 +203,7 @@ HomelabDocs.ui = (function () {
       (l.note ? '<div class="tt-note">' + esc(l.note) + "</div>" : "");
   }
 
-  const RECOVERY_KIND = { auto: "automatic reaction", manual: "operator action", none: "no automatic recovery", standby: "backup copy available" };
+  const RECOVERY_KIND = { auto: "automatic reaction", manual: "operator action", none: "no automatic recovery", standby: "backup copy available", computed: "computed from the model" };
 
   function counts(r) {
     const c = { on: 0, deg: 0, off: 0 };
@@ -228,7 +233,8 @@ HomelabDocs.ui = (function () {
       '<ol class="sc-steps">' + steps + "</ol>" +
       '<div class="sc-model">' + rows + "</div>" +
       '<div class="sc-actions">' + (needManual ? '<button class="btn primary" data-sc-manual>' + esc(sc.manualLabel || "Recover") + "</button>" : "") +
-      '<button class="btn" data-sc-replay>Replay</button><button class="btn" data-sc-close>End</button></div>';
+      '<button class="btn" data-sc-replay>Replay</button><button class="btn" data-sc-close>End</button>' +
+      '<button class="btn danger next-btn" data-sc-next>Next failure →</button></div>';
   }
 
   function layersPopover(state) {

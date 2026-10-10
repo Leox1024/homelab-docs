@@ -95,7 +95,7 @@ HomelabDocs.model = {
      views: modes in which the scenario makes sense.
      ------------------------------------------------------------------ */
   scenarios: [
-    { id: "wan", key: "A", short: "WAN", icon: "antenna", title: "WAN link failure", desc: "The FWA link goes down",
+    { id: "wan", key: "A", short: "WAN", icon: "antenna", title: "WAN link failure", desc: "The FWA link goes down", teaser: "What happens if an Internet link drops?",
       faults: ["fwa"], recovery: "auto", views: ["network", "full"], focus: ["fwa", "starlink", "wsw1", "opn01"],
       steps: [
         { ph: 0, t: "The FWA link stops responding." },
@@ -105,7 +105,7 @@ HomelabDocs.model = {
         { ph: 1, t: "Interrupted sessions reconnect; the Cloudflare and FRP tunnels re-establish on their own." }
       ] },
 
-    { id: "fw", key: "B", short: "Firewall", icon: "shield", title: "Firewall failure", desc: "OPNsense 01 stops",
+    { id: "fw", key: "B", short: "Firewall", icon: "shield", title: "Firewall failure", desc: "OPNsense 01 stops", teaser: "What happens if the main firewall dies?",
       faults: ["opn01"], recovery: "auto", views: ["network", "full"], focus: ["opn01", "opn02", "l-ha"],
       steps: [
         { ph: 0, t: "OPNsense 01 stops and its CARP advertisements cease." },
@@ -115,7 +115,7 @@ HomelabDocs.model = {
         { ph: 1, t: "Traffic flows through OPNsense 02 and stack unit 2, still balanced across both WANs." }
       ] },
 
-    { id: "pve01", key: "C", short: "PVE01", icon: "server", title: "PVE01 failure", desc: "The primary compute node stops",
+    { id: "pve01", key: "C", short: "PVE01", icon: "server", title: "PVE01 failure", desc: "The primary compute node stops", teaser: "What happens if the main server dies?",
       faults: ["pve01"], recovery: "auto", views: ["full"], focus: ["pve01", "pve03"],
       steps: [
         { ph: 0, t: "PVE01 stops: its workloads go offline." },
@@ -125,7 +125,7 @@ HomelabDocs.model = {
         { ph: 1, t: "The remaining workloads are restored from backup or wait for PVE01." }
       ] },
 
-    { id: "power", key: "D", short: "Power", icon: "bolt", title: "Power outage", desc: "Mains power is lost",
+    { id: "power", key: "D", short: "Power", icon: "bolt", title: "Power outage", desc: "Mains power is lost", teaser: "What happens during a power cut?",
       faults: ["grid"], recovery: "auto", views: ["power", "full"], focus: ["grid", "ups", "pdu"],
       steps: [
         { ph: 0, t: "Mains power is lost." },

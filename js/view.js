@@ -45,7 +45,11 @@ HomelabDocs.view = (function () {
     anim = requestAnimationFrame(step);
   }
 
-  function fit(animate, insetRight, insetLeft) { userMoved = false; animateTo(fitTarget(insetRight, insetLeft), animate ? 450 : 0); }
+  function fit(animate, insetRight, insetLeft) {
+    userMoved = false;
+    if (!svg.getBoundingClientRect().width) return;   // not laid out yet (hidden tab): the resize observer refits later
+    animateTo(fitTarget(insetRight, insetLeft), animate ? 450 : 0);
+  }
 
   function zoomAt(factor, px, py, animate) {
     const s = size();

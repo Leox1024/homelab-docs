@@ -146,6 +146,25 @@ body:not(.is-ready) #stage { opacity: 0; }
 .btn:hover { background: rgba(148, 163, 196, .1); }
 .btn.primary { background: rgba(45, 212, 191, .16); border-color: rgba(45, 212, 191, .5); color: #99f6e4; }
 .btn.primary:hover { background: rgba(45, 212, 191, .26); }
+.btn.danger { background: rgba(248, 113, 113, .14); border-color: rgba(248, 113, 113, .5); color: #fecaca; }
+.btn.danger:hover { background: rgba(248, 113, 113, .26); }
+.btn svg { width: 14px; height: 14px; margin-right: 7px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.break-btn { margin-top: 14px; height: 36px; padding: 0 14px; }
+.next-btn { margin-left: auto; }
+
+/* ---------- Demo invite ---------- */
+.demo-invite {
+  position: fixed; left: 50%; bottom: calc(var(--gap) + var(--hud) + 12px); transform: translateX(-50%); z-index: 16;
+  display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 16px; max-width: calc(100vw - 2 * var(--gap));
+  background: var(--glass-strong); border-color: rgba(248, 113, 113, .45); animation: invite-in .45s ease-out;
+}
+.pulse-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--bad); animation: ping 1.4s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, .65); } 100% { box-shadow: 0 0 0 11px rgba(248, 113, 113, 0); } }
+@keyframes invite-in { from { opacity: 0; } to { opacity: 1; } }
+.di-text strong { display: block; font-size: 13.5px; font-weight: 620; white-space: nowrap; }
+.di-text small { display: block; color: var(--muted); font-size: 11.5px; }
+.di-text b { color: #fecaca; font-weight: 650; }
+.demo-invite .btn { white-space: nowrap; flex: none; }
 
 /* ---------- Side panel ---------- */
 .panel {
@@ -292,8 +311,10 @@ body.panel-open .zoom { right: calc(380px + 2 * var(--gap)); }
   .legend-toggle { height: 40px; }
   .legend-toggle span { display: none; }
   .legend-body { bottom: 50px; flex-direction: column; gap: 10px; }
+  .demo-invite { left: var(--gap); right: var(--gap); transform: none; bottom: calc(var(--gap) + 62px + 124px); gap: 10px; padding: 10px 8px 10px 14px; }
+  .di-text strong { white-space: normal; }
   .hint { top: calc(var(--gap) + 2 * var(--hud) + 16px); bottom: auto; white-space: normal; width: calc(100% - 2 * var(--gap)); text-align: center; border-radius: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .panel, .sc-steps li, .hint, #stage, .lg-power { transition: none !important; animation: none !important; }
+  .panel, .sc-steps li, .hint, #stage, .lg-power, .pulse-dot, .demo-invite { transition: none !important; animation: none !important; }
 }

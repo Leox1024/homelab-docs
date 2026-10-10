@@ -8,8 +8,8 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#070b14">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=18">
-  <link rel="stylesheet" href="css/map.css?v=18">
+  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/map.css?v=22">
 </head>
 <body>
   <a class="skip" href="#map">Skip to diagram</a>
@@ -94,18 +94,25 @@
     <button id="zoom-fit" aria-label="Fit to screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   </div>
 
-  <div id="hint" class="hint" role="note">Drag to pan · scroll or pinch to zoom · click any component</div>
+  <div id="demo-invite" class="demo-invite glass" hidden role="status">
+    <span class="pulse-dot" aria-hidden="true"></span>
+    <div class="di-text"><strong></strong><small>Playing a short simulation in <b class="di-count">6</b>s</small></div>
+    <button class="btn danger" data-demo-play>Show me</button>
+    <button class="icon-btn" data-demo-close aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+
+  <div id="hint" class="hint" role="note">Drag to pan · scroll or pinch to zoom · click any device to inspect it or make it fail</div>
 
   <noscript><p class="noscript">This interactive map requires JavaScript.</p></noscript>
 
-  <script src="js/data-topology.js?v=18"></script>
-  <script src="js/data-model.js?v=18"></script>
-  <script src="js/engine.js?v=18"></script>
-  <script src="js/render-server.js?v=18"></script>
-  <script src="js/render.js?v=18"></script>
-  <script src="js/view.js?v=18"></script>
-  <script src="js/flows.js?v=18"></script>
-  <script src="js/ui.js?v=18"></script>
-  <script src="js/app.js?v=18"></script>
+  <script src="js/data-topology.js?v=22"></script>
+  <script src="js/data-model.js?v=22"></script>
+  <script src="js/engine.js?v=22"></script>
+  <script src="js/render-server.js?v=22"></script>
+  <script src="js/render.js?v=22"></script>
+  <script src="js/view.js?v=22"></script>
+  <script src="js/flows.js?v=22"></script>
+  <script src="js/ui.js?v=22"></script>
+  <script src="js/app.js?v=22"></script>
 </body>
 </html>
